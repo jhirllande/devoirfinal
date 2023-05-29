@@ -12,16 +12,19 @@ db = Database('employee.db')
 
 # Styling
 style = ttk.Style()
-style.configure("TButton", background="#FF6B6B", foreground="#4949c6")
-style.configure("TLabel", background="#F4F4F4", foreground="#4949c6")
-style.configure("TEntry", background="#FFFFFF", fieldbackground="#4949c6")
-style.configure("TText", background="#FFFFFF", foreground="#4949c6")
+style.configure("TButton", background="#FF6B6B", foreground="#4949c6")  # Style pour les boutons
+style.configure("TLabel", background="#F4F4F4", foreground="#4949c6")  # Style pour les étiquettes de texte
+style.configure("TEntry", background="#FFFFFF", fieldbackground="#4949c6")  # Style pour les champs de saisie
+style.configure("TText", background="#FFFFFF", foreground="#4949c6")  # Style pour les zones de texte
 
-# Input Form Interface
+# Interface du formulaire de saisie
 def switch_to_input_form():
     display_frame.pack_forget()
     input_frame.pack()
 
+# ...
+
+# Fonction pour ajouter un employé
 def ajouter_employee():
     nom = nom_entry.get()
     prenom = prenom_entry.get()
@@ -30,115 +33,86 @@ def ajouter_employee():
 
     if nom and prenom and age and poste:
         try:
-            age = int(age)  # Make sure age is a valid integer
+            age = int(age)  # Vérifie que l'âge est un entier valide
         except ValueError:
-            messagebox.showerror("Invalid Age", "Please enter a valid integer for age.")
+            messagebox.showerror("Âge invalide", "Veuillez entrer un entier valide pour l'âge.")
             return
         db.ajouter_employee(nom, prenom, age, poste)
-        result_label.configure(text="Employee information successfully saved in the 'employee.db' database.")
+        result_label.configure(text="Informations sur l'employé enregistrées avec succès dans la base de données 'employee.db'.")
         clear_input_fields()
-        switch_to_display_form()  # Refresh the display table
+        switch_to_display_form()  # Rafraîchit le tableau d'affichage
     else:
-        result_label.configure(text="Please fill in all the fields.", foreground="red")
+        result_label.configure(text="Veuillez remplir tous les champs.", foreground="red")
 
-# In the Database class:
+# Dans la classe Database :
+
 def clear_input_fields():
     nom_entry.delete(0, tk.END)
     prenom_entry.delete(0, tk.END)
     age_entry.delete(0, tk.END)
     poste_entry.delete(0, tk.END)
 
-# Display Form Interface
+# Interface du formulaire d'affichage
 def switch_to_display_form():
     input_frame.pack_forget()
     display_frame.pack()
     afficher_employees()
 
-def afficher_employees():
-    employees = db.recuperer_employees()
+# ...
 
-    for row in table.get_children():
-        table.delete(row)
-
-    for employee in employees:
-        table.insert("", "end", values=(employee.id, employee.nom, employee.prenom, employee.age, employee.poste))
-
-    result_label.configure(text="Employee information successfully retrieved from the 'employee.db' database.")
-
-# Input Form
+# Formulaire de saisie
 input_frame = tk.Frame(root, bg="#F4F4F4")
-input_label = ttk.Label(input_frame, text="New Employee", font=("Helvetica", 16), background="#F4F4F4")
+input_label = ttk.Label(input_frame, text="Nouvel employé", font=("Helvetica", 16), background="#F4F4F4")
 
-input_label.pack(pady=5)
-result_label = ttk.Label(input_frame, text="", background="#F4F4F4")
-result_label.pack()
+# ...
 
-nom_label = ttk.Label(input_frame, text="Employee Name:", background="#F4F4F4")
+nom_label = ttk.Label(input_frame, text="Nom de l'employé:", background="#F4F4F4")
 nom_label.pack()
 nom_entry = ttk.Entry(input_frame)
 nom_entry.pack()
 
-prenom_label = ttk.Label(input_frame, text="Employee First Name:", background="#F4F4F4")
+prenom_label = ttk.Label(input_frame, text="Prénom de l'employé:", background="#F4F4F4")
 prenom_label.pack()
 prenom_entry = ttk.Entry(input_frame)
 prenom_entry.pack()
 
-age_label = ttk.Label(input_frame, text="Employee Age:", background="#F4F4F4")
+age_label = ttk.Label(input_frame, text="Âge de l'employé:", background="#F4F4F4")
 age_label.pack()
 age_entry = ttk.Entry(input_frame)
 age_entry.pack()
 
-poste_label = ttk.Label(input_frame, text="Employee Position:", background="#F4F4F4")
+poste_label = ttk.Label(input_frame, text="Poste de l'employé:", background="#F4F4F4")
 poste_label.pack()
 poste_entry = ttk.Entry(input_frame)
 poste_entry.pack()
 
-ajouter_button = ttk.Button(input_frame, text="Add", command=ajouter_employee, style="TButton")
+ajouter_button = ttk.Button(input_frame, text="Ajouter", command=ajouter_employee, style="TButton")
 ajouter_button.pack(pady=10)
 
-switch_to_display_button = ttk.Button(input_frame, text="Display", command=switch_to_display_form, style="TButton")
+switch_to_display_button = ttk.Button(input_frame, text="Afficher", command=switch_to_display_form, style="TButton")
 switch_to_display_button.pack()
 
-# Display Form
+# ...
+
+# Formulaire d'affichage
 display_frame = tk.Frame(root, bg="#F4F4F4")
 
-display_label = ttk.Label(display_frame, text="Registered Employees", font=("Helvetica", 16), background="#F4F4F4")
-display_label.pack(pady=10)
+# ...
 
-table_frame = ttk.Frame(display_frame)
-table = ttk.Treeview(table_frame, columns=("ID", "Name", "First Name", "Age", "Position"), show="headings")
-table.heading("ID", text="ID")
-table.heading("Name", text="Name")
-table.heading("First Name", text="First Name")
-table.heading("Age", text="Age")
-table.heading("Position", text="Position")
-
-table.column("ID", width=20)
-table.column("Name", width=150)
-table.column("First Name", width=150)
-table.column("Age", width=80)
-table.column("Position", width=150)
-
-table.tag_configure("oddrow", background="#E8E8E8")
-table.tag_configure("evenrow", background="#FFFFFF")
-
-table.pack(padx=10, pady=10)
-table_frame.pack(padx=10, pady=5)
-
-switch_to_input_button = ttk.Button(display_frame, text="Back", command=switch_to_input_form, style="TButton")
+switch_to_input_button = ttk.Button(display_frame, text="Retour", command=switch_to_input_form, style="TButton")
 switch_to_input_button.pack(pady=10)
 
-# Other Functions
+# Autres fonctions
 def on_quit():
     db.fermer_connexion()
     root.destroy()
 
-# Quit Button
-quit_button = ttk.Button(root, text="Quit", command=on_quit, style="TButton")
+# Bouton Quitter
+quit_button = ttk.Button(root, text="Quitter", command=on_quit, style="TButton")
 quit_button.pack(pady=10)
 
-# Start the program
+# Lancement du programme
 switch_to_input_form()
 root.mainloop()
 
-print("Program end.")
+print("Fin du programme.")

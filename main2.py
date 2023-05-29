@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 import sqlite3
 
 
-# Database Class
+# Classe Database
 class Database:
     def __init__(self, db_name):
         self.conn = sqlite3.connect(db_name)
@@ -37,15 +37,15 @@ class Database:
         self.conn.close()
 
 
-# GUI
+# Interface graphique
 root = tk.Tk()
-root.title(" employerDatabase")
+root.title("employerDatabase")
 root.geometry("600x400")
 root.configure(background="#F4F4F4")
 
 db = Database('employer.db')
 
-# Styling
+# Style
 style = ttk.Style()
 style.configure("TButton", background="#FF6B6B", foreground="#4949c6")
 style.configure("TLabel", background="#F4F4F4", foreground="#4949c6")
@@ -53,7 +53,7 @@ style.configure("TEntry", background="#FFFFFF", fieldbackground="#4949c6")
 style.configure("TText", background="#FFFFFF", foreground="#4949c6")
 
 
-# Input Form Interface
+# Interface du formulaire de saisie
 def switch_to_input_form():
     display_frame.pack_forget()
     input_frame.pack()
@@ -68,14 +68,14 @@ def ajouter_emploi():
 
     if titreEmploi and entreprise and description and localisation and salaire:
         try:
-            salaire = float(salaire)  # Make sure salaire is a valid float
+            salaire = float(salaire)  # Vérifie que salaire est un nombre flottant valide
         except ValueError:
-            messagebox.showerror("Invalid Salary", "Please enter a valid number for salary.")
+            messagebox.showerror("Salaire invalide", "Veuillez entrer un nombre valide pour le salaire.")
             return
         db.ajouter_emploi(titreEmploi, entreprise, description, localisation, salaire)
         result_label.configure(text="L'emploi a été enregistré avec succès dans la base de données 'jobs.db'.")
         clear_input_fields()
-        switch_to_display_form()  # Refresh the display table
+        switch_to_display_form()  # Rafraîchit le tableau d'affichage
     else:
         result_label.configure(text="Veuillez remplir tous les champs.", foreground="red")
 
@@ -88,7 +88,7 @@ def clear_input_fields():
     salaire_entry.delete(0, tk.END)
 
 
-# Display Form Interface
+# Interface du formulaire d'affichage
 def switch_to_display_form():
     input_frame.pack_forget()
     display_frame.pack()
@@ -106,10 +106,10 @@ def afficher_emplois():
         emploi["id"], emploi["titreEmploi"], emploi["entreprise"], emploi["description"], emploi["localisation"],
         emploi["salaire"]))
 
-    result_label.configure(text="Les emplois ont été récupérés avec succès depuis la base de données 'jobs.db'.")
+    result_label.configure(text="Les emplois ont été récupérés avec succès depuis la base de données 'employer.db'.")
 
 
-# Input Form
+# Formulaire de saisie
 input_frame = tk.Frame(root, bg="#F4F4F4")
 input_label = ttk.Label(input_frame, text="Nouvel Emploi", font=("Helvetica", 16), background="#F4F4F4")
 result_label = ttk.Label(input_frame, text="", background="#F4F4F4")
@@ -132,7 +132,7 @@ salaire_entry = ttk.Entry(input_frame)
 ajouter_button = ttk.Button(input_frame, text="Ajouter", command=ajouter_emploi)
 switch_to_display_button = ttk.Button(input_frame, text="Afficher", command=switch_to_display_form)
 
-# Use grid to position widgets in horizontal layout
+# Utilisation de grid pour positionner les widgets horizontalement
 input_label.grid(row=0, column=0, columnspan=4, pady=5)
 result_label.grid(row=1, column=0, columnspan=4)
 
@@ -154,7 +154,7 @@ salaire_entry.grid(row=4, column=1)
 ajouter_button.grid(row=5, column=0, columnspan=2, pady=10)
 switch_to_display_button.grid(row=5, column=2, columnspan=2)
 
-# Display Form
+# Formulaire d'affichage
 display_frame = tk.Frame(root, bg="#F4F4F4")
 
 display_label = ttk.Label(display_frame, text="Emplois enregistrés", font=("Helvetica", 16), background="#F4F4F4")
@@ -188,17 +188,17 @@ switch_to_input_button = ttk.Button(display_frame, text="Retour", command=switch
 switch_to_input_button.pack(pady=10)
 
 
-# Other Functions
+# Autres fonctions
 def on_quit():
     db.fermer_connexion()
     root.destroy()
 
 
-# Quit Button
+# Bouton Quitter
 quit_button = ttk.Button(root, text="Quitter", command=on_quit)
 quit_button.pack(pady=10)
 
-# Start the program
+# Lancement du programme
 switch_to_input_form()
 root.mainloop()
 
